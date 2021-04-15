@@ -1,4 +1,5 @@
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Apply } from './apply';
 import { Post } from './post';
 
 @Entity()
@@ -17,4 +18,7 @@ export class User {
 
   @OneToMany((type) => Post, (post) => post.user)
   posts!: Post[];
+
+  @OneToMany((type) => Apply, (apply) => apply.user)
+  applies!: Apply[];
 }

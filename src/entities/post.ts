@@ -6,6 +6,7 @@ import {
   OneToMany,
   PrimaryColumn,
 } from 'typeorm';
+import { Apply } from './apply';
 import { Tag } from './tag';
 import { User } from './user';
 
@@ -32,4 +33,7 @@ export class Post {
 
   @OneToMany((type) => Tag, (tag) => tag.post)
   tags!: Tag[];
+
+  @OneToMany((type) => Apply, (apply) => apply.post)
+  applies!: Apply[];
 }
