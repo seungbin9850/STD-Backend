@@ -1,6 +1,6 @@
 import config from './src/config';
 import { ConnectionOptions } from 'typeorm';
-import { User, Post, Tag } from './src/entities';
+import { User, Post, Tag, Apply } from './src/entities';
 
 const connectionOptions: ConnectionOptions = {
   type: 'mysql',
@@ -11,7 +11,7 @@ const connectionOptions: ConnectionOptions = {
   database: config.mysql.name,
   synchronize: true,
   logging: true,
-  entities: [User, Post, Tag],
+  entities: [User, Post, Tag, Apply],
 };
 
 export default connectionOptions;
