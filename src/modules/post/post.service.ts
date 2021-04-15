@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Apply, Post, Tag } from 'src/entities';
+import { HttpError } from 'src/exception';
 import {
   ApplyRepository,
   PostRepository,
   TagRepository,
 } from 'src/repositories';
 import { makeId } from 'src/utils';
-import { ApplyPostDTO } from './dto';
+import { ApplyPostDTO, DenyApplyDTO } from './dto';
 import { WritePostDTO } from './dto/write-post.dto';
 
 @Injectable()
@@ -44,5 +45,11 @@ export class PostService {
     apply.postId = postId;
     apply.userId = decoded.id;
     await this.applyRepository.save(apply);
+  }
+
+  async denyApply(req: DenyApplyDTO, decoded: any) {
+    const post = await this.postRepository.findOne({ id: req.postId });
+    if (post.userId !== decoded.id) throw new HttpError(409, 'Not Your Post');
+    await this.applyRepository.deleteApply(req);
   }
 }
