@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Post, Tag } from 'src/entities';
-import { PostRepository, TagRepository } from 'src/repositories';
+import { Apply, Post, Tag } from 'src/entities';
+import {
+  ApplyRepository,
+  PostRepository,
+  TagRepository,
+} from 'src/repositories';
 import { makeId } from 'src/utils';
+import { ApplyPostDTO } from './dto';
 import { WritePostDTO } from './dto/write-post.dto';
 
 @Injectable()
@@ -9,6 +14,7 @@ export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
     private readonly tagRepository: TagRepository,
+    private readonly applyRepository: ApplyRepository,
   ) {}
 
   async writePost(req: WritePostDTO, decoded: any) {
@@ -30,5 +36,13 @@ export class PostService {
       tag.tag = tagItem;
       await this.tagRepository.save(tag);
     }
+  }
+
+  async applyPost(req: ApplyPostDTO, decoded: any) {
+    const { postId } = req;
+    const apply = new Apply();
+    apply.postId = postId;
+    apply.userId = decoded.id;
+    await this.applyRepository.save(apply);
   }
 }
