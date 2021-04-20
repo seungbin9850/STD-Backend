@@ -8,6 +8,7 @@ import {
 } from 'src/repositories';
 import { makeId } from 'src/utils';
 import { ApplyPostDTO, DenyApplyDTO } from './dto';
+import { GetPostsDTO } from './dto/get-posts.dto';
 import { WritePostDTO } from './dto/write-post.dto';
 
 @Injectable()
@@ -37,6 +38,10 @@ export class PostService {
       tag.tag = tagItem;
       await this.tagRepository.save(tag);
     }
+  }
+
+  async getPosts(req: GetPostsDTO) {
+    return await this.postRepository.getPosts(Number(req.page));
   }
 
   async applyPost(req: ApplyPostDTO, decoded: any) {
