@@ -19,7 +19,7 @@ export class PostService {
     private readonly applyRepository: ApplyRepository,
   ) {}
 
-  async writePost(req: WritePostDTO, decoded: any) {
+  async writePost(req: WritePostDTO, userId: string) {
     const { title, content, tags } = req;
     const postId: string = await makeId();
 
@@ -27,7 +27,7 @@ export class PostService {
     post.id = postId;
     post.title = title;
     post.content = content;
-    post.userId = decoded.id;
+    post.userId = userId;
     await this.postRepository.save(post);
 
     for (let tagItem of tags) {
@@ -44,17 +44,17 @@ export class PostService {
     return await this.postRepository.getPosts(Number(req.page));
   }
 
-  async applyPost(req: ApplyPostDTO, decoded: any) {
+  async applyPost(req: ApplyPostDTO, userId: string) {
     const { postId } = req;
     const apply = new Apply();
     apply.postId = postId;
-    apply.userId = decoded.id;
+    apply.userId = userId;
     await this.applyRepository.save(apply);
   }
 
-  async denyApply(req: DenyApplyDTO, decoded: any) {
+  async denyApply(req: DenyApplyDTO, userId: string) {
     const post = await this.postRepository.findOne({ id: req.postId });
-    if (post.userId !== decoded.id) throw new HttpError(409, 'Not Your Post');
+    if (post.userId !== userId) throw new HttpError(409, 'Not Your Post');
     await this.applyRepository.deleteApply(req);
   }
 }
