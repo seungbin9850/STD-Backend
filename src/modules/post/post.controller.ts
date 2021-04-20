@@ -20,7 +20,7 @@ export class PostController {
   @Post('/')
   @UseGuards(new AuthGuard())
   async writePost(@Token() decoded: any, @Body() req: WritePostDTO) {
-    await this.postService.writePost(req, decoded);
+    await this.postService.writePost(req, decoded.id);
     return { status: 200, message: 'success' };
   }
 
@@ -45,14 +45,14 @@ export class PostController {
   @Post('/apply')
   @UseGuards(new AuthGuard())
   async applyPost(@Token() decoded: any, @Body() req: ApplyPostDTO) {
-    await this.postService.applyPost(req, decoded);
+    await this.postService.applyPost(req, decoded.id);
     return { status: 200, message: 'success' };
   }
 
   @Delete('/apply/deny')
   @UseGuards(new AuthGuard())
   async denyApply(@Token() decoded: any, @Body() req: DenyApplyDTO) {
-    await this.postService.denyApply(req, decoded);
+    await this.postService.denyApply(req, decoded.id);
     return { status: 200, message: 'success' };
   }
 }
