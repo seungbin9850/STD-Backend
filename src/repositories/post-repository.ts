@@ -15,7 +15,7 @@ export class PostRepository extends Repository<Post> {
     await this.createQueryBuilder('post')
       .delete()
       .from(Post)
-      .where('id := postId', { postId })
+      .where('id = :postId', { postId })
       .execute();
   }
 }

@@ -14,7 +14,7 @@ export class ApplyRepository extends Repository<Apply> {
 
   public async getAllApply(postId: string) {
     return await this.createQueryBuilder('apply')
-      .where('post_id := postId', { postId })
+      .where('post_id = :postId', { postId })
       .getMany();
   }
 }
