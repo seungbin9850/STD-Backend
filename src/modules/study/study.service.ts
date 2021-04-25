@@ -37,4 +37,9 @@ export class StudyService {
     await this.postRepository.deletePost(postId);
     await this.applyRepository.delete(postId);
   }
+
+  async getMyStudy(userId: string) {
+    const studies = await this.studyRepository.getMyStudy(userId);
+    return studies;
+  }
 }
