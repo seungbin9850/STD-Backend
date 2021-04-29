@@ -41,7 +41,13 @@ export class PostService {
   }
 
   async getPosts(req: GetPostsDTO) {
-    return await this.postRepository.getPosts(Number(req.page));
+    try {
+      const { tag, page } = req;
+      if (tag) return await this.postRepository.searchPost(tag, Number(page));
+      return await this.postRepository.getPosts(Number(page));
+    } catch (e) {
+      console.log(e.message);
+    }
   }
 
   async applyPost(req: ApplyPostDTO, userId: string) {
