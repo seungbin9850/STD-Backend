@@ -1,5 +1,5 @@
 import { Post } from 'src/entities';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, getRepository, Repository } from 'typeorm';
 
 @EntityRepository(Post)
 export class PostRepository extends Repository<Post> {
@@ -17,5 +17,26 @@ export class PostRepository extends Repository<Post> {
       .from(Post)
       .where('id = :postId', { postId })
       .execute();
+  }
+
+  public async searchPost(tag: string, page: number) {
+    const qb = await getRepository(Post)
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.tags', 'tag');
+
+    return qb
+      .where(
+        'post.id IN' +
+          qb
+            .subQuery()
+            .select('post.id')
+            .from(Post, 'post')
+            .leftJoin('post.tags', 'tag')
+            .where('tag.tag = :tag', { tag })
+            .getQuery(),
+      )
+      .offset(page * 3)
+      .limit(3)
+      .getMany();
   }
 }
