@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -23,6 +24,9 @@ export class Post {
 
   @Column({ name: 'user_id', length: 45 })
   userId: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   @ManyToOne((type) => User, (user) => user.id, {
     onUpdate: 'CASCADE',
