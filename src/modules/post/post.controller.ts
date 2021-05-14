@@ -27,7 +27,7 @@ export class PostController {
   @Get('/')
   @UseGuards(new AuthGuard())
   async getPosts(@Token() decoded: any, @Query() req: GetPostsDTO) {
-    const data = await this.postService.getPosts(req);
+    const { data, maxPage } = await this.postService.getPosts(req);
     const response = data.map((e) => {
       e['isMine'] = false;
       if (e.userId === decoded.id) e['isMine'] = true;
@@ -36,10 +36,17 @@ export class PostController {
         title: e.title,
         content: e.content,
         tags: e.tags,
+        createdAt: e.createdAt,
         isMine: e['isMine'],
       };
     });
-    return { status: 200, message: 'success', data: response };
+
+    return {
+      status: 200,
+      message: 'success',
+      data: response,
+      maxPage,
+    };
   }
 
   @Post('/apply')
