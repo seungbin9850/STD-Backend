@@ -32,8 +32,6 @@ export class PostService {
 
     for (let tagItem of tags) {
       const tag = new Tag();
-      const id = await makeId();
-      tag.id = id;
       tag.postId = postId;
       tag.tag = tagItem;
       await this.tagRepository.save(tag);
@@ -43,8 +41,18 @@ export class PostService {
   async getPosts(req: GetPostsDTO) {
     try {
       const { tag, page } = req;
-      if (tag) return await this.postRepository.searchPost(tag, Number(page));
-      return await this.postRepository.getPosts(Number(page));
+      if (tag) {
+        const posts = await this.tagRepository.findAllTag(tag);
+        return {
+          data: await this.postRepository.searchPost(tag, Number(page)),
+          maxPage: Math.ceil(posts.length / 3),
+        };
+      }
+      const posts = await this.postRepository.getAllPosts();
+      return {
+        data: await this.postRepository.getPosts(Number(page)),
+        maxPage: Math.ceil(posts.length / 3),
+      };
     } catch (e) {
       console.log(e.message);
     }
@@ -62,5 +70,9 @@ export class PostService {
     const post = await this.postRepository.findOne({ id: req.postId });
     if (post.userId !== userId) throw new HttpError(409, 'Not Your Post');
     await this.applyRepository.deleteApply(req);
+  }
+
+  async getAllPosts() {
+    return await this.postRepository.getAllPosts();
   }
 }
