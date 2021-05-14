@@ -8,7 +8,12 @@ export class PostRepository extends Repository<Post> {
       .leftJoinAndSelect('post.tags', 'tag')
       .skip(page * 3)
       .take(3)
+      .orderBy('post.createdAt', 'DESC')
       .getMany();
+  }
+
+  public async getAllPosts() {
+    return await this.createQueryBuilder('post').getMany();
   }
 
   public async deletePost(postId: string) {
@@ -29,14 +34,23 @@ export class PostRepository extends Repository<Post> {
         'post.id IN' +
           qb
             .subQuery()
-            .select('post.id')
-            .from(Post, 'post')
-            .leftJoin('post.tags', 'tag')
-            .where('tag.tag = :tag', { tag })
+            .select('*')
+            .from(
+              '(' +
+                (await getRepository(Post)
+                  .createQueryBuilder('post')
+                  .select('post.id')
+                  .leftJoin('post.tags', 'tag')
+                  .where(`tag.tag = "${tag}"`)
+                  .offset(page * 3)
+                  .limit(3)
+                  .orderBy('post.createdAt', 'DESC')
+                  .getQuery()) +
+                ')',
+              'tmp',
+            )
             .getQuery(),
       )
-      .offset(page * 3)
-      .limit(3)
       .getMany();
   }
 }
